@@ -1,0 +1,114 @@
+/* Navbar*/
+.navbar .ms-auto {
+    margin-left: auto !important;
+}
+
+.navbar .container-fluid {
+    position: relative;
+}
+
+.dropdown-menu-scrollable {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+}
+
+.dropdown-item-text {
+    display: block;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-menu-scrollable::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu-scrollable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-menu-scrollable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.dropdown-menu-scrollable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.dropdown-menu {
+    min-width: 50px;
+    z-index: 1050 !important;
+}
+
+.dropdown-item span {
+    flex: 1;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 12px;
+}
+
+/* Footer */
+/* Pastikan footer tetap di bawah */
+html, body {
+   min-height: 100vh;
+}
+
+body {
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1 0 auto;
+}
+
+/* Perbaikan tampilan footer */
+footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff;
+  position: static; /* atau relative */
+  bottom: auto;
+}
+
+footer a {
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  color: var(--primary-color) !important;
+  text-decoration: underline !important;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background: var(--primary-color);
+  transform: translateY(-3px);
+  text-decoration: none !important;
+}
+
+.text-light {
+  color: #f8f9fa !important;
+}
