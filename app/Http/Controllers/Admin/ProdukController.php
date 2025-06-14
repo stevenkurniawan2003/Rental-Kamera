@@ -17,6 +17,9 @@ class ProdukController extends Controller
             'stok' => 'required|integer|min:0',
             'kategori' => 'required|string',
             'merek' => 'required|string',
+            'kondisi' => 'required|string',
+            'sensor' => 'required|string',
+            'iso' => 'required|string',
             'deskripsi' => 'required|string',
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -30,6 +33,9 @@ class ProdukController extends Controller
             'stok' => $validated['stok'],
             'kategori' => $validated['kategori'],
             'merek' => $validated['merek'],
+            'kondisi' => $validated['kondisi'],
+            'sensor' => $validated['sensor'],
+            'iso' => $validated['iso'],
             'deskripsi' => $validated['deskripsi'],
             'gambar' => $namaGambar,
             'status' => $validated['stok'] > 0 ? 'Tersedia' : 'Habis'
@@ -46,6 +52,9 @@ class ProdukController extends Controller
             'stok' => 'required|integer|min:0',
             'kategori' => 'required|string',
             'merek' => 'required|string',
+            'kondisi' => 'required|string',
+            'sensor' => 'required|string',
+            'iso' => 'required|string',
             'deskripsi' => 'required|string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -68,6 +77,9 @@ class ProdukController extends Controller
             'stok' => $validated['stok'],
             'kategori' => $validated['kategori'],
             'merek' => $validated['merek'],
+            'kondisi' => $validated['kondisi'],
+            'sensor' => $validated['sensor'],
+            'iso' => $validated['iso'],
             'deskripsi' => $validated['deskripsi'],
             'gambar' => $validated['gambar'] ?? $produk->gambar,
             'status' => $validated['stok'] > 0 ? 'Tersedia' : 'Habis'

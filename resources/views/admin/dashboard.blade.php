@@ -33,7 +33,7 @@
             <div class="col-md-4 mb-3">
                 <select class="form-select">
                     <option selected>Semua Merek</option>
-                    <option>Canon</option>
+                    <option>Canhon</option>
                     <option>Nikon</option>
                     <option>Sony</option>
                     <option>Fujifilm</option>
@@ -74,6 +74,9 @@
                             data-stok="{{ $produk->stok }}"
                             data-kategori="{{ $produk->kategori }}"
                             data-merek="{{ $produk->merek }}"
+                            data-kondisi="{{ $produk->kondisi }}"
+                            data-sensor="{{ $produk->sensor }}"
+                            data-iso="{{ $produk->iso }}"
                             data-deskripsi="{{ $produk->deskripsi }}"
                             data-gambar="{{ $produk->gambar ? asset('storage/produk/' . $produk->gambar) : '' }}">
                         <i class="fas fa-edit me-1"></i> Edit
@@ -164,6 +167,9 @@
                 stok: button.data('stok'),
                 kategori: button.data('kategori'),
                 merek: button.data('merek'),
+                kondisi: button.data('kondisi'),
+                sensor: button.data('sensor'),
+                iso: button.data('iso'),
                 deskripsi: button.data('deskripsi'),
                 gambar: button.data('gambar')
             };
@@ -177,6 +183,9 @@
             $('#edit_stok').val(produk.stok);
             $('#edit_kategori').val(produk.kategori);
             $('#edit_merek').val(produk.merek);
+            $('#edit_kondisi').val(produk.kondisi);
+            $('#edit_sensor').val(produk.sensor);
+            $('#edit_iso').val(produk.iso);
             $('#edit_deskripsi').val(produk.deskripsi);
 
             // Set preview gambar

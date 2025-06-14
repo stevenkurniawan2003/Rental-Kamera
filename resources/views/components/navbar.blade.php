@@ -49,7 +49,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item d-flex align-items-center px-3 py-2" href="#">
+                <a class="dropdown-item d-flex align-items-center px-3 py-2" href="{{ route('keranjang') }}">
                   <i class="fas fa-shopping-cart me-2"></i>Keranjang
                 </a>
               </li>

@@ -12,4 +12,10 @@ class ProdukController extends Controller
         $produks = Produk::latest()->paginate(8);
         return view('katalog', compact('produks'));
     }
+
+    public function detailproduk($id)
+    {
+        $produk = Produk::findOrFail($id);
+        return view('detail-produk', compact('produk'));
+    }
 }

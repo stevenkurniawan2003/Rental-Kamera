@@ -26,4 +26,9 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed'
     ];
+
+    public function keranjang()
+    {
+        return $this->hasMany(Keranjang::class, 'user_id');
+    }
 }

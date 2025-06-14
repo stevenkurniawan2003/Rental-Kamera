@@ -149,6 +149,29 @@
         background-color: #0d6efd;
         border-color: #0d6efd;
     }
+
+    /* Modal Styles */
+    .modal-rental .modal-header {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .modal-rental .modal-title {
+        font-weight: 600;
+    }
+
+    .modal-rental .modal-body {
+        padding-top: 0;
+    }
+
+    .modal-rental .form-label {
+        font-weight: 600;
+    }
+
+    .modal-rental .btn-confirm {
+        padding: 10px 20px;
+        font-weight: 500;
+    }
 </style>
 @endsection
 
@@ -305,7 +328,7 @@
     <!-- Products Section -->
     <section class="products-section">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Menampilkan 8 Produk</h4>
+            <h4 class="mb-0">Menampilkan {{ $produks->count() }} Produk</h4>
             <div class="dropdown sort-dropdown">
                 <button class="btn dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-sort me-2"></i>Urutkan: Paling Sesuai
@@ -319,11 +342,11 @@
         </div>
 
         <div class="row">
-           @forelse ($produks as $produk)
-           <div class="col-md-4 col-lg-3 mb-4">
-               <div class="product-card">
-                   <div class="product-img-container">
-                       <img src="{{ asset('storage/produk/' . $produk->gambar) }}" class="product-img" alt="{{ $produk->nama }}">
+            @forelse ($produks as $produk)
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="{{ asset('storage/produk/' . $produk->gambar) }}" class="product-img" alt="{{ $produk->nama }}">
                     </div>
                     <div class="product-info">
                         <h5 class="product-title">{{ $produk->nama }}</h5>
@@ -336,23 +359,76 @@
                         </div>
                         <div class="product-actions">
                             @if($produk->stok > 0)
-                                <button class="btn btn-primary"><i class="fas fa-shopping-cart me-2"></i>Sewa</button>
+                                @auth
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rentModal{{ $produk->id }}">
+                                        <i class="fas fa-calendar-alt me-2"></i>Sewa
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-primary">
+                                        <i class="fas fa-calendar-alt me-2"></i>Sewa
+                                    </a>
+                                @endauth
                             @else
-                                <button class="btn btn-secondary" disabled><i class="fas fa-shopping-cart me-2"></i>Habis</button>
+                                <button class="btn btn-secondary" disabled><i class="fas fa-ban me-2"></i>Habis</button>
                             @endif
-                            <button class="btn btn-outline-secondary">Detail</button>
+                            <a href="{{ route('detail.produk', $produk->id) }}" class="btn btn-outline-secondary">Detail</a>
                         </div>
                     </div>
                 </div>
+
+                @auth
+                <!-- Modal Sewa -->
+                <div class="modal fade" id="rentModal{{ $produk->id }}" tabindex="-1" aria-labelledby="rentModalLabel{{ $produk->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content modal-rental">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="rentModalLabel{{ $produk->id }}">Form Penyewaan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="#" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $produk->id }}">
+                                <div class="modal-body">
+                                    <p class="text-muted mb-3">Atur detail penyewaan untuk <strong>{{ $produk->nama }}</strong></p>
+
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label">Jumlah</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="number" class="form-control w-25" id="quantity" name="quantity"
+                                                   min="1" max="{{ $produk->stok }}" value="1" required>
+                                            <span class="ms-2 text-muted">(Stok {{ $produk->stok }} unit)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">Tanggal Mulai</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">Tanggal Selesai</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary btn-confirm">Lanjutkan Pemesanan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endauth
             </div>
             @empty
-            <div class="col-span-3 py-12 text-center">
+            <div class="col-12 py-12 text-center">
                 <div class="text-gray-400 mb-4">
                     <i class="fas fa-camera"></i>
                 </div>
                 <h3 class="text-xl font-medium text-gray-500 mb-2">Belum Ada Data Produk</h3>
             </div>
             @endforelse
+        </div>
 
         <!-- Pagination -->
         @if($produks->hasPages())
@@ -407,4 +483,24 @@
         @endif
     </section>
 </div>
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set min date for start date (today)
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[name="start_date"]').forEach(input => {
+        input.min = today;
+    });
+
+    // Update end date min date when start date changes
+    document.querySelectorAll('input[name="start_date"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const endDateInput = this.closest('.modal-content').querySelector('input[name="end_date"]');
+            endDateInput.min = this.value;
+        });
+    });
+});
+</script>
+@endsection
 @endsection

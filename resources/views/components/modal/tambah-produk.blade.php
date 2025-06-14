@@ -1,13 +1,24 @@
 <style>
     .modal-lg {
-    max-width: 800px;
-}
+        max-width: 800px;
+    }
 
-.preview-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-}
+    .preview-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
 </style>
 
 <div class="modal fade" id="tambahProdukModal" tabindex="-1" aria-labelledby="tambahProdukModalLabel" aria-hidden="true">
@@ -22,72 +33,102 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <!-- Upload Gambar -->
-                            <div class="mb-3">
-                                <label for="gambar" class="form-label">Gambar Produk</label>
-                                <input type="file" class="form-control" id="gambar" name="gambar" required>
-                                <div class="preview-image mt-2" style="display: none;">
-                                    <img id="preview" src="#" alt="Preview Gambar" class="img-thumbnail" style="max-height: 200px;">
+                            <!-- Informasi Dasar -->
+                            <div class="form-section">
+                                <h6 class="form-section-title">Informasi Dasar</h6>
+
+                                <div class="mb-3">
+                                    <label for="nama" class="form-label">Nama Produk</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="kategori" class="form-label">Kategori</label>
+                                    <select class="form-select" id="kategori" name="kategori" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="Kamera DSLR">Kamera DSLR</option>
+                                        <option value="Kamera Mirrorless">Kamera Mirrorless</option>
+                                        <option value="Lensa">Lensa</option>
+                                        <option value="Aksesoris">Aksesoris</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="merek" class="form-label">Merek</label>
+                                    <select class="form-select" id="merek" name="merek" required>
+                                        <option value="">Pilih Merek</option>
+                                        <option value="Canon">Canon</option>
+                                        <option value="Nikon">Nikon</option>
+                                        <option value="Sony">Sony</option>
+                                        <option value="Fujifilm">Fujifilm</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <!-- Nama Produk -->
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama Produk</label>
-                                <input type="text" class="form-control" id="nama" name="nama" required>
-                            </div>
+                            <!-- Harga & Stok -->
+                            <div class="form-section">
+                                <h6 class="form-section-title">Harga & Stok</h6>
 
-                            <!-- Harga -->
-                            <div class="mb-3">
-                                <label for="harga" class="form-label">Harga Sewa per Hari</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" class="form-control" id="harga" name="harga" required>
+                                <div class="mb-3">
+                                    <label for="harga" class="form-label">Harga Sewa per Hari</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control" id="harga" name="harga" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="stok" class="form-label">Stok Tersedia</label>
+                                    <input type="number" class="form-control" id="stok" name="stok" min="0" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-md-6">
-                            <!-- Stok -->
-                            <div class="mb-3">
-                                <label for="stok" class="form-label">Stok Tersedia</label>
-                                <input type="number" class="form-control" id="stok" name="stok" min="0" required>
+                            <!-- Spesifikasi Teknis -->
+                            <div class="form-section">
+                                <h6 class="form-section-title">Spesifikasi Teknis</h6>
+
+                                <div class="mb-3">
+                                    <label for="kondisi" class="form-label">Kondisi</label>
+                                    <input type="text" class="form-control" id="kondisi" name="kondisi" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="sensor" class="form-label">Sensor</label>
+                                    <input type="text" class="form-control" id="sensor" name="sensor" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="iso" class="form-label">Iso Range</label>
+                                    <input type="text" class="form-control" id="iso" name="iso" required>
+                                </div>
                             </div>
 
-                            <!-- Kategori -->
-                            <div class="mb-3">
-                                <label for="kategori" class="form-label">Kategori</label>
-                                <select class="form-select" id="kategori" name="kategori" required>
-                                    <option value="">Pilih Kategori</option>
-                                    <option value="Kamera DSLR">Kamera DSLR</option>
-                                    <option value="Kamera Mirrorless">Kamera Mirrorless</option>
-                                    <option value="Lensa">Lensa</option>
-                                    <option value="Aksesoris">Aksesoris</option>
-                                </select>
-                            </div>
+                            <!-- Gambar Produk -->
+                            <div class="form-section">
+                                <h6 class="form-section-title">Gambar Produk</h6>
 
-                            <!-- Merek -->
-                            <div class="mb-3">
-                                <label for="merek" class="form-label">Merek</label>
-                                <select class="form-select" id="merek" name="merek" required>
-                                    <option value="">Pilih Merek</option>
-                                    <option value="Canon">Canon</option>
-                                    <option value="Nikon">Nikon</option>
-                                    <option value="Sony">Sony</option>
-                                    <option value="Fujifilm">Fujifilm</option>
-                                </select>
+                                <div class="mb-3">
+                                    <label for="gambar" class="form-label">Upload Gambar</label>
+                                    <input type="file" class="form-control" id="gambar" name="gambar" required>
+                                    <div class="preview-image mt-2" style="display: none;">
+                                        <img id="preview" src="#" alt="Preview Gambar" class="img-thumbnail" style="max-height: 200px;">
+                                    </div>
+                                    <small class="text-muted">Format: JPG, PNG. Maksimal 2MB.</small>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Deskripsi -->
-                    <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi Produk</label>
-                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
+                    <div class="form-section">
+                        <h6 class="form-section-title">Deskripsi Produk</h6>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" placeholder="Masukkan deskripsi lengkap produk..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan Produk</button>
                 </div>
             </form>

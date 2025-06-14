@@ -15,7 +15,15 @@ class Produk extends Model
         'stok',
         'kategori',
         'merek',
+        'kondisi',
+        'sensor',
+        'iso',
         'deskripsi',
         'gambar'
     ];
+
+    public function keranjang()
+    {
+        return $this->hasMany(Keranjang::class, 'produk_id');
+    }
 }
