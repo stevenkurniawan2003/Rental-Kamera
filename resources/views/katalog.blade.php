@@ -346,7 +346,9 @@
             <div class="col-md-4 col-lg-3 mb-4">
                 <div class="product-card">
                     <div class="product-img-container">
-                        <img src="{{ asset('storage/produk/' . $produk->gambar) }}" class="product-img" alt="{{ $produk->nama }}">
+                        <a href="{{ route('detail.produk', $produk->slug) }}">
+                            <img src="{{ asset('storage/produk/' . $produk->gambar) }}" class="product-img" alt="{{ $produk->nama }}">
+                        </a>
                     </div>
                     <div class="product-info">
                         <h5 class="product-title">{{ $produk->nama }}</h5>
@@ -371,7 +373,7 @@
                             @else
                                 <button class="btn btn-secondary" disabled><i class="fas fa-ban me-2"></i>Habis</button>
                             @endif
-                            <a href="{{ route('detail.produk', $produk->id) }}" class="btn btn-outline-secondary">Detail</a>
+                            <a href="{{ route('detail.produk', $produk->slug) }}" class="btn btn-outline-secondary">Detail</a>
                         </div>
                     </div>
                 </div>

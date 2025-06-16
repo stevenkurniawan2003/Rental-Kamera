@@ -175,7 +175,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
                                         <span class="fw-bold">Subtotal: <span class="subtotal" data-id="{{ $item->id }}">
-                                            Rp{{ number_format($item->total_price, 0, ',', '.') }}
+                                            Rp{{ number_format($item->jumlah * $item->produk->harga * $item->duration, 0, ',', '.') }}
                                         </span></span>
                                         <form action="{{ route('keranjang.hapus', $item->id) }}" method="POST">
                                             @csrf
@@ -209,7 +209,7 @@
                     @foreach($cartItems as $item)
                     <div class="summary-item">
                         <span>{{ $item->produk->nama }} ({{ $item->jumlah }}x)</span>
-                        <span>Rp{{ number_format($item->total_price, 0, ',', '.') }}</span>
+                        <span>Rp{{ number_format($item->jumlah * $item->produk->harga * $item->duration, 0, ',', '.') }}</span>
                     </div>
                     @endforeach
 

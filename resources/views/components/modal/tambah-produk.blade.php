@@ -55,14 +55,17 @@
 
                                 <div class="mb-3">
                                     <label for="merek" class="form-label">Merek</label>
-                                    <select class="form-select" id="merek" name="merek" required>
-                                        <option value="">Pilih Merek</option>
-                                        <option value="Canon">Canon</option>
-                                        <option value="Nikon">Nikon</option>
-                                        <option value="Sony">Sony</option>
-                                        <option value="Fujifilm">Fujifilm</option>
-                                    </select>
+                                    <input list="daftar-merek" class="form-control" id="merek" name="merek" required placeholder="Pilih atau ketik merek">
+                                    <datalist id="daftar-merek">
+                                        <option value="Canon">
+                                        <option value="Nikon">
+                                        <option value="Sony">
+                                        <option value="Fujifilm">
+                                        <option value="Panasonic">
+                                        <option value="Olympus">
+                                    </datalist>
                                 </div>
+                            </div>
                             </div>
 
                             <!-- Harga & Stok -->
@@ -91,19 +94,13 @@
 
                                 <div class="mb-3">
                                     <label for="kondisi" class="form-label">Kondisi</label>
-                                    <input type="text" class="form-control" id="kondisi" name="kondisi" required>
+                                    <select class="form-select" id="kondisi" name="kondisi" required>
+                                        <option value="">Pilih Kondisi</option>
+                                        <option value="Baru">Baru</option>
+                                        <option value="Sangat Baik">Sangat Baik</option>
+                                        <option value="Baik">Baik</option>
+                                    </select>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="sensor" class="form-label">Sensor</label>
-                                    <input type="text" class="form-control" id="sensor" name="sensor" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="iso" class="form-label">Iso Range</label>
-                                    <input type="text" class="form-control" id="iso" name="iso" required>
-                                </div>
-                            </div>
 
                             <!-- Gambar Produk -->
                             <div class="form-section">
@@ -124,7 +121,7 @@
                     <!-- Deskripsi -->
                     <div class="form-section">
                         <h6 class="form-section-title">Deskripsi Produk</h6>
-                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3" placeholder="Masukkan deskripsi lengkap produk..."></textarea>
+                        <textarea class="form-control" id="edit_deskripsi" name="deskripsi" rows="3" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

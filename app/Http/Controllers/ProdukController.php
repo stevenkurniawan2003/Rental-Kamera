@@ -18,4 +18,10 @@ class ProdukController extends Controller
         $produk = Produk::findOrFail($id);
         return view('detail-produk', compact('produk'));
     }
+
+    public function show($slug)
+    {
+        $produk = Produk::where('slug', $slug)->firstOrFail();
+        return view('detail-produk', compact('produk'));
+    }
 }

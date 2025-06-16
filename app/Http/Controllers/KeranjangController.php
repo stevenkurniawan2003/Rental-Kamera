@@ -20,7 +20,7 @@ class KeranjangController extends Controller
                 // Hitung durasi sewa (dalam hari)
                 $startDate = Carbon::parse($item->tanggal_mulai);
                 $endDate = Carbon::parse($item->tanggal_selesai);
-                $item->duration = $startDate->diffInDays($endDate) + 1;
+                $item->duration = $item->duration;
 
                 // Hitung total harga (harga per hari x durasi x jumlah)
                 $item->total_price = $item->produk->harga * $item->duration * $item->jumlah;
@@ -34,57 +34,57 @@ class KeranjangController extends Controller
         return view('keranjang', compact('cartItems', 'totalPrice'));
     }
 
-    public function tambah(Request $request)
+   public function tambah(Request $request)
     {
-        // Validasi input
         $request->validate([
             'product_id' => 'required|exists:produks,id',
             'quantity' => 'required|integer|min:1',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'action_type' => 'required|in:add_to_cart,rent_now' // Tambahkan validasi untuk action_type
+            'action_type' => 'required|in:add_to_cart,rent_now'
         ]);
 
-        // Cari produk berdasarkan ID
         $produk = Produk::findOrFail($request->product_id);
 
-        // Cek ketersediaan stok
         if ($produk->stok < $request->quantity) {
-            return back()->with('error', 'Maaf, stok produk tidak mencukupi');
+            return back()->with('error', 'Stok tidak mencukupi');
         }
 
-        // Cek apakah produk sudah ada di keranjang
+        // ✅ Hitung durasi dengan logika: minimal 1 hari
+        $start = Carbon::parse($request->start_date);
+        $end = Carbon::parse($request->end_date);
+        $diff = $start->diffInDays($end);
+        $durasi = max(1, $diff);
+
+        // Cek item sudah ada atau belum
         $existingCart = Keranjang::where('user_id', Auth::id())
             ->where('produk_id', $request->product_id)
             ->first();
 
         if ($existingCart) {
-            // Update item yang sudah ada
             $existingCart->update([
                 'jumlah' => $existingCart->jumlah + $request->quantity,
                 'tanggal_mulai' => $request->start_date,
-                'tanggal_selesai' => $request->end_date
+                'tanggal_selesai' => $request->end_date,
+                'durasi' => $durasi  // ⬅️ Simpan durasi
             ]);
         } else {
-            // Tambahkan item baru ke keranjang
             Keranjang::create([
                 'user_id' => Auth::id(),
                 'produk_id' => $request->product_id,
                 'jumlah' => $request->quantity,
                 'tanggal_mulai' => $request->start_date,
-                'tanggal_selesai' => $request->end_date
+                'tanggal_selesai' => $request->end_date,
+                'durasi' => $durasi  // ⬅️ Simpan durasi
             ]);
         }
 
-        // Redirect berdasarkan aksi
-        if ($request->action_type == 'rent_now') {
-            return redirect()->route('checkout')
-                   ->with('success', 'Produk berhasil ditambahkan, silahkan lanjut ke pembayaran');
-        }
-
-        return redirect()->route('keranjang')
-               ->with('success', 'Produk berhasil ditambahkan ke keranjang');
+        return $request->action_type === 'rent_now'
+            ? redirect()->route('checkout')->with('success', 'Silakan lanjut ke pembayaran')
+            : redirect()->route('keranjang')->with('success', 'Produk ditambahkan ke keranjang');
     }
+
+
 
     public function update(Request $request, $id)
     {

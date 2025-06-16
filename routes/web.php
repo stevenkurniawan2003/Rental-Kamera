@@ -21,7 +21,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/katalog', [ProdukController::class, 'katalog'])->name('kataloguser');
-Route::get('/produk/detail/{id}', [ProdukController::class, 'detailproduk'])->name('detail.produk');
+Route::get('/produk/{slug}', [ProdukController::class, 'show'])->name('detail.produk');
 
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function() {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

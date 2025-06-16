@@ -236,14 +236,6 @@
                             <div class="spec-value">{{ $produk->kondisi }}</div>
                         </div>
                         <div class="spec-item">
-                            <div class="spec-label">Sensor</div>
-                            <div class="spec-value">{{ $produk->sensor }}</div>
-                        </div>
-                        <div class="spec-item">
-                            <div class="spec-label">ISO Range</div>
-                            <div class="spec-value">{{ $produk->iso }}</div>
-                        </div>
-                        <div class="spec-item">
                             <div class="spec-label">Deskripsi</div>
                             <div class="spec-value">{{ $produk->deskripsi }}</div>
                         </div>
@@ -253,9 +245,13 @@
                 <div class="specification-section mt-4">
                     <h3 class="section-title">Aksesoris Termasuk</h3>
                     <ul class="accessories-list">
-                        <li>Battery</li>
-                        <li>Charger</li>
-                        <li>Memory Card 64GB</li>
+                        @if(strtolower($produk->kategori) === 'aksesoris')
+                            <li>-</li>
+                        @else
+                            <li>Battery</li>
+                            <li>Charger</li>
+                            <li>Memory Card 64GB</li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -275,17 +271,28 @@
             <div class="modal-body pt-0">
                 <p class="text-muted mb-4">Atur detail penyewaan untuk <strong>{{ $produk->nama }}</strong></p>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('keranjang.tambah') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $produk->id }}">
                     <input type="hidden" name="action_type" value="add_to_cart">
+                    <input type="hidden" name="duration" id="addToCartDurationInput">
 
                     <!-- Jumlah -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">Jumlah</label>
                         <div class="d-flex align-items-center">
                             <input type="number" class="form-control w-25" name="quantity"
-                                   min="1" max="{{ $produk->stok }}" value="1" required id="addToCartQuantity">
+                                min="1" max="{{ $produk->stok }}" value="1" required id="addToCartQuantity">
                             <span class="ms-2 text-muted">(Stok {{ $produk->stok }} unit)</span>
                         </div>
                     </div>
@@ -346,17 +353,28 @@
             <div class="modal-body pt-0">
                 <p class="text-muted mb-4">Atur detail penyewaan untuk <strong>{{ $produk->nama }}</strong></p>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('keranjang.tambah') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $produk->id }}">
                     <input type="hidden" name="action_type" value="rent_now">
+                    <input type="hidden" name="duration" id="rentNowDurationInput">
 
                     <!-- Jumlah -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">Jumlah</label>
                         <div class="d-flex align-items-center">
                             <input type="number" class="form-control w-25" name="quantity"
-                                   min="1" max="{{ $produk->stok }}" value="1" required id="rentNowQuantity">
+                                min="1" max="{{ $produk->stok }}" value="1" required id="rentNowQuantity">
                             <span class="ms-2 text-muted">(Stok {{ $produk->stok }} unit)</span>
                         </div>
                     </div>
@@ -397,7 +415,7 @@
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-calendar-check me-2"></i>Lanjutkan Pemesanan
+                            <i class="fas fa-calendar-alt me-2"></i>Sewa Sekarang
                         </button>
                     </div>
                 </form>
@@ -410,11 +428,15 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing modals...');
+    
     // Initialize both modals
     initModal('addToCart');
     initModal('rentNow');
 
     function initModal(modalType) {
+        console.log('Initializing modal:', modalType);
+        
         const today = new Date().toISOString().split('T')[0];
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -427,6 +449,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const durationText = document.getElementById(`${modalType}DurationText`);
         const quantityText = document.getElementById(`${modalType}QuantityText`);
         const totalPriceText = document.getElementById(`${modalType}TotalPriceText`);
+        const durationInput = document.getElementById(`${modalType}DurationInput`);
+
+        // Check if all elements exist
+        if (!startDateInput || !endDateInput || !quantityInput || !durationText || !quantityText || !totalPriceText || !durationInput) {
+            console.error('Missing elements for modal:', modalType);
+            return;
+        }
 
         // Set initial dates
         startDateInput.min = today;
@@ -440,12 +469,17 @@ document.addEventListener('DOMContentLoaded', function() {
         function calculatePrice() {
             const startDate = new Date(startDateInput.value);
             const endDate = new Date(endDateInput.value);
-            const quantity = parseInt(quantityInput.value);
+            const quantity = parseInt(quantityInput.value) || 1;
             const pricePerDay = {{ $produk->harga }};
 
-            // Calculate duration
-            const diffTime = Math.abs(endDate - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            // Calculate duration (minimum 1 day)
+            const diffTime = endDate - startDate;
+            const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+            console.log(`${modalType} - Start:`, startDate, 'End:', endDate, 'Days:', diffDays, 'Quantity:', quantity);
+
+            // Update hidden input
+            durationInput.value = diffDays;
 
             // Update display
             durationText.textContent = diffDays + ' hari';
@@ -454,6 +488,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Calculate and format total price
             const totalPrice = diffDays * pricePerDay * quantity;
             totalPriceText.textContent = 'Rp' + totalPrice.toLocaleString('id-ID');
+
+            console.log(`${modalType} - Total price:`, totalPrice);
         }
 
         // Event listeners
@@ -473,6 +509,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         endDateInput.addEventListener('change', calculatePrice);
         quantityInput.addEventListener('input', calculatePrice);
+        quantityInput.addEventListener('change', calculatePrice);
+
+        console.log('Modal initialized successfully:', modalType);
     }
 });
 </script>

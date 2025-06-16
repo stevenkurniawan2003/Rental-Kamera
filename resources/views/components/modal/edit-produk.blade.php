@@ -55,15 +55,19 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="edit_merek" class="form-label">Merek</label>
-                                    <select class="form-select" id="edit_merek" name="merek" required>
-                                        <option value="">Pilih Merek</option>
-                                        <option value="Canon">Canon</option>
-                                        <option value="Nikon">Nikon</option>
-                                        <option value="Sony">Sony</option>
-                                        <option value="Fujifilm">Fujifilm</option>
-                                    </select>
+                                    <label for="merek" class="form-label">Merek</label>
+                                    <input list="daftar-merek" class="form-control" id="merek" name="merek" required placeholder="Pilih atau ketik merek">
+                                    <datalist id="daftar-merek">
+                                        <option value="Canon">
+                                        <option value="Nikon">
+                                        <option value="Sony">
+                                        <option value="Fujifilm">
+                                        <option value="Panasonic">
+                                        <option value="Olympus">
+                                    </datalist>
                                 </div>
+                            </div>
+
                             </div>
 
                             <!-- Harga & Stok -->
@@ -91,18 +95,13 @@
                                 <h6 class="form-section-title">Spesifikasi Teknis</h6>
 
                                 <div class="mb-3">
-                                    <label for="edit_kondisi" class="form-label">Kondisi</label>
-                                    <input type="text" class="form-control" id="edit_kondisi" name="kondisi" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="edit_sensor" class="form-label">Sensor</label>
-                                    <input type="text" class="form-control" id="edit_sensor" name="sensor" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="edit_iso" class="form-label">Iso Range</label>
-                                    <input type="text" class="form-control" id="edit_iso" name="iso" required>
+                                    <label for="kondisi" class="form-label">Kondisi</label>
+                                    <select class="form-select" id="kondisi" name="kondisi" required>
+                                        <option value="">Pilih Kondisi</option>
+                                        <option value="Baru">Baru</option>
+                                        <option value="Sangat Baik">Sangat Baik</option>
+                                        <option value="Baik">Baik</option>
+                                    </select>
                                 </div>
                             </div>
 

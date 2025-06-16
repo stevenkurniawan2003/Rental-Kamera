@@ -153,7 +153,7 @@
 @endif
 
 @include('components.modal.tambah-produk')
-@include('components.modal.edit-produk', ['produk' => $produk])
+@include('components.modal.edit-produk', ['produk' => $produk ??null])
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
