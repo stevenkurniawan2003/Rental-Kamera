@@ -20,7 +20,7 @@
           <a class="nav-link fw-medium px-3 py-2 rounded" href="{{ route('kataloguser') }}">Katalog</a>
         </li>
         <li class="nav-item mx-lg-2">
-          <a class="nav-link fw-medium px-3 py-2 rounded" href="#contact">Kontak</a>
+          <a class="nav-link fw-medium px-3 py-2 rounded" href="{{ route('contact') }}">Kontak</a>
         </li>
       </ul>
 

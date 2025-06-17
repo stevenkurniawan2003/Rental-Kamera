@@ -62,3 +62,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/riwayat-sewa', [App\Http\Controllers\TransaksiUserController::class, 'riwayat'])
     ->middleware('auth')
     ->name('riwayat.sewa');
+
+
+Route::get('/kontak', function () {
+    return view('contact');
+})->name('contact');
+
+Route::get('/katalog', [ProdukController::class, 'katalog'])->name('kataloguser');
+

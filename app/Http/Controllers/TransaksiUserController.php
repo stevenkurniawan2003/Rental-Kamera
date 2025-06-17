@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Midtrans\Snap;
+use Midtrans\Config;
+use Illuminate\Support\Facades\Http;
 
 class TransaksiUserController extends Controller
 {
@@ -208,14 +211,97 @@ class TransaksiUserController extends Controller
                              ->withInput()
                              ->with('error', 'Terjadi kesalahan saat memproses transaksi: ' . $e->getMessage());
         }
+
+
+        \Config::set('midtrans.serverKey', config('midtrans.serverKey'));
+        \Config::set('midtrans.clientKey', config('midtrans.clientKey'));
+        \Config::set('midtrans.isProduction', false);
+        \Config::set('midtrans.isSanitized', true);
+        \Config::set('midtrans.is3ds', true);
+
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaksi->KODE_TRANSAKSI,
+                'gross_amount' => $transaksi->total_harga,
+            ],
+            'customer_details' => [
+                'first_name' => $transaksi->nama,
+                'email' => $transaksi->email,
+                'phone' => $transaksi->telepon,
+            ],
+            'enabled_payments' => ['gopay', 'qris', 'bank_transfer'], // opsional
+        ];
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->withBasicAuth(config('midtrans.serverKey'), '')
+        ->post('https://api.sandbox.midtrans.com/v2/charge', [
+            'payment_type' => 'qris',
+            'transaction_details' => [
+                'order_id' => $transaksi->KODE_TRANSAKSI,
+                'gross_amount' => $transaksi->total_harga
+            ],
+            'customer_details' => [
+                'first_name' => $transaksi->nama,
+                'email' => $transaksi->email,
+                'phone' => $transaksi->telepon,
+            ]
+        ]);
+
+        if ($response->successful()) {
+            $qr_url = $response->json()['actions'][0]['url'];
+            return view('checkout-sukses', compact('transaksi', 'qr_url'));
+        } else {
+            return back()->with('error', 'Gagal mengambil QR Code');
+        }
+
+
     }
 
     // Method untuk menampilkan halaman sukses
     public function checkoutSukses($kode)
     {
-        $transaksi = Transaksi::where('KODE_TRANSAKSI', $kode)->with('items.produk')->firstOrFail();
-        return view('checkout-sukses', compact('transaksi'));
+        $transaksi = Transaksi::where('KODE_TRANSAKSI', $kode)
+            ->with('items.produk')
+            ->firstOrFail();
+
+        $snapToken = null;
+
+        if ($transaksi->metode_pembayaran === 'qris') {
+            try {
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                \Midtrans\Config::$clientKey = config('midtrans.clientKey');
+                \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+                \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+                \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $transaksi->KODE_TRANSAKSI,
+                        'gross_amount' => $transaksi->total_harga
+                    ],
+                    'customer_details' => [
+                        'first_name' => $transaksi->nama,
+                        'email' => $transaksi->email,
+                        'phone' => $transaksi->telepon,
+                    ],
+                    'enabled_payments' => ['qris'],
+                ];
+
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+            } catch (\Exception $e) {
+                \Log::error('Midtrans error: ' . $e->getMessage());
+                return redirect()->route('checkout')->with('error', 'Gagal menyiapkan pembayaran QRIS.');
+            }
+        }
+
+        return view('checkout-sukses', compact('transaksi', 'snapToken'));
     }
+
 
 
     public function riwayat()

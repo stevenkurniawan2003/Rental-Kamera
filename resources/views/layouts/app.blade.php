@@ -81,6 +81,10 @@
         }
       });
     });
+
+    window.onload = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
   </script>
 
   @stack('scripts')
