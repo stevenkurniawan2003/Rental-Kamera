@@ -12,13 +12,9 @@ class ItemTransaksi extends Model
     protected $table = 'transaksi_items'; // Sesuai dengan nama tabel di database
 
     protected $fillable = [
-        'transaksi_id',
-        'produk_id',
-        'jumlah',
-        'harga_per_hari',
-        'durasi',
-        'subtotal'
-    ];
+    'transaksi_id', 'produk_id', 'jumlah',
+    'harga_per_hari', 'durasi', 'subtotal'
+    ];  
 
     protected $casts = [
         'harga_per_hari' => 'decimal:2',

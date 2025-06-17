@@ -14,20 +14,10 @@ class Transaksi extends Model
     protected $guarded = []; // Izinkan semua field untuk debug
 
     protected $fillable = [
-        'user_id',
-        'nama',
-        'email',
-        'telepon',
-        'ktp',
-        'alamat',
-        'tanggal_sewa',
-        'tanggal_kembali',
-        'catatan',
-        'metode_pembayaran',
-        'total_harga',
-        'KODE_TRANSAKSI',
-        'status' // Tambahkan jika ada
-    ];
+    'user_id', 'nama', 'email', 'telepon', 'ktp',
+    'alamat', 'tanggal_sewa', 'tanggal_kembali',
+    'catatan', 'metode_pembayaran', 'total_harga', 'KODE_TRANSAKSI'
+];
 
     protected $casts = [
         'tanggal_sewa' => 'date',

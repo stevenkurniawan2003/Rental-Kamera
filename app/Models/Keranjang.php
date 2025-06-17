@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Keranjang extends Model
 {
@@ -14,6 +15,12 @@ class Keranjang extends Model
         'tanggal_mulai',
         'tanggal_selesai'
     ];
+
+    protected $casts = [
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -24,8 +31,15 @@ class Keranjang extends Model
         return $this->belongsTo(Produk::class, 'produk_id');
     }
 
+    // Accessor untuk durasi
     public function getDurasiAttribute()
     {
         return $this->duration;
+    }
+
+    // Accessor untuk subtotal
+    public function getSubtotalAttribute()
+    {
+        return $this->produk->harga * $this->jumlah * $this->durasi;
     }
 }

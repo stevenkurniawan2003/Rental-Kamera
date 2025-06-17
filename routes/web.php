@@ -53,8 +53,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/keranjang/update/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
     Route::delete('/keranjang/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
 
-    // Checkout - SIMPLIFIED ROUTES
+    // CHECKOUT - PERBAIKAN ROUTE
     Route::get('/checkout', [TransaksiUserController::class, 'checkout'])->name('checkout');
     Route::post('/checkout/process', [TransaksiUserController::class, 'processCheckout'])->name('checkout.process');
-    Route::get('/checkout-sukses/{kode}', [TransaksiUserController::class, 'checkoutSukses'])->name('checkout.sukses');
+    Route::get('/checkout/sukses/{kode}', [TransaksiUserController::class, 'checkoutSukses'])->name('checkout.sukses');
 });
+
+Route::get('/riwayat-sewa', [App\Http\Controllers\TransaksiUserController::class, 'riwayat'])
+    ->middleware('auth')
+    ->name('riwayat.sewa');

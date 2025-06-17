@@ -1,58 +1,61 @@
-@extends('layouts.app')
-
-@section('title', 'Checkout Berhasil')
-
-@section('content')
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h2 class="text-success fw-bold mb-2"><i class="fas fa-check-circle me-2"></i>Checkout Berhasil!</h2>
-        <p class="text-muted">Terima kasih telah melakukan pemesanan. Berikut rincian transaksi Anda.</p>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Rincian Transaksi</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong>Nama:</strong> {{ $transaksi->nama }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Kode Transaksi:</strong> 
-                            <span class="text-primary">{{ $kodeTransaksi }}</span>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Metode Pembayaran:</strong> <span class="text-danger">Bayar di Tempat (COD)</span>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Total yang Harus Dibayarkan:</strong>
-                            <span class="fw-bold text-success">Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</span>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Tanggal Sewa:</strong> {{ \Carbon\Carbon::parse($transaksi->tanggal_sewa)->format('d M Y') }}<br>
-                            <strong>Tanggal Kembali:</strong> {{ \Carbon\Carbon::parse($transaksi->tanggal_kembali)->format('d M Y') }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">Lokasi Pengambilan Barang</h5>
-                    <p class="text-muted mb-3">Silakan ambil barang sewaan Anda di lokasi berikut:</p>
-
-                    <!-- Google Maps Embed -->
-                    <div class="ratio ratio-16x9">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.298236707231!2d112.68803237407589!3d-7.53489789245927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd803205baab9b7%3A0xf8264a1c36aa3c5d!2sKamera%20Rental%20Center!5e0!3m2!1sid!2sid!4v1718582760411!5m2!1sid!2sid"
-                            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Berhasil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        <h2 class="mt-3 text-success">Checkout Berhasil!</h2>
+                        <p class="lead">Terima kasih atas pemesanan Anda.</p>
+                        
+                        <div class="alert alert-info">
+                            <strong>Kode Transaksi: {{ $transaksi->KODE_TRANSAKSI }}</strong>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Detail Penyewa</h5>
+                                <p><strong>Nama:</strong> {{ $transaksi->nama }}</p>
+                                <p><strong>Email:</strong> {{ $transaksi->email }}</p>
+                                <p><strong>Telepon:</strong> {{ $transaksi->telepon }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Detail Sewa</h5>
+                                <p><strong>Tanggal Sewa:</strong> {{ $transaksi->tanggal_sewa->format('d/m/Y') }}</p>
+                                <p><strong>Tanggal Kembali:</strong> {{ $transaksi->tanggal_kembali->format('d/m/Y') }}</p>
+                                <p><strong>Total:</strong> Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Produk yang Disewa</h5>
+                            @foreach($transaksi->items as $item)
+                            <div class="border p-2 mb-2">
+                                <strong>{{ $item->produk->nama }}</strong> - 
+                                {{ $item->jumlah }} unit × {{ $item->durasi }} hari = 
+                                Rp{{ number_format($item->subtotal, 0, ',', '.') }}
+                            </div>
+                            @endforeach
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="{{ route('landingpage') }}" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Kembali ke Beranda
+                            </a>
+                        </div>
                     </div>
-                    <p class="mt-3 text-muted small">Alamat: Jl. Kalimantan No. 333, Jember, Jawa Timur</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
+</body>
+</html>
