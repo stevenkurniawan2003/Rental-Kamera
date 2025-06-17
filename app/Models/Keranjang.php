@@ -6,15 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Keranjang extends Model
 {
-    protected $fillable =
-    [
+    protected $fillable = [
         'user_id',
-        'produk_id',
+        'produk_id', 
         'jumlah',
+        'duration', 
         'tanggal_mulai',
         'tanggal_selesai'
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -23,5 +22,10 @@ class Keranjang extends Model
     public function produk()
     {
         return $this->belongsTo(Produk::class, 'produk_id');
+    }
+
+    public function getDurasiAttribute()
+    {
+        return $this->duration;
     }
 }

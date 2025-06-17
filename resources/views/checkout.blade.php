@@ -72,7 +72,7 @@
 </head>
 <body>
     <div class="container checkout-container">
-         <a href="{{ route('keranjang')}}" class="btn btn-outline-secondary back-button mb-2">
+        <a href="{{ route('keranjang')}}" class="btn btn-outline-secondary back-button mb-2">
             <i class="fas fa-arrow-left me-2"></i>Kembali
         </a>
         <h2 class="mb-4">Checkout Penyewaan</h2>
@@ -83,7 +83,8 @@
                 <div class="card product-card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Detail Penyewa</h5>
-                        <form id="checkoutForm">
+                        <form id="checkoutForm" action="{{ route('checkout.process') }}" method="POST">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nama" class="form-label">Nama Lengkap</label>
@@ -115,21 +116,40 @@
                 <div class="card product-card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Detail Penyewaan</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3 date-input">
-                                <label for="tanggal_sewa" class="form-label">Tanggal Sewa</label>
-                                <input type="date" class="form-control" id="tanggal_sewa" name="tanggal_sewa" required>
-
+                        @if($cartItems->count() > 0)
+                            @php
+                                $firstItem = $cartItems->first();
+                            @endphp
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="tanggal_sewa" class="form-label">Tanggal Sewa</label>
+                                    <input type="date" class="form-control" id="tanggal_sewa" name="tanggal_sewa" 
+                                           value="{{ $firstItem->tanggal_mulai }}" readonly>
+                                    <small class="text-muted">Tanggal dari keranjang</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
+                                    <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" 
+                                           value="{{ $firstItem->tanggal_selesai }}" readonly>
+                                    <small class="text-muted">Tanggal dari keranjang</small>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3 date-input">
-                                <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
-                                <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" required>
-                              
+                            <div class="alert alert-info">
+                                <small><i class="fas fa-info-circle me-1"></i>
+                                Tanggal penyewaan sudah ditentukan saat menambah ke keranjang. 
+                                Untuk mengubah tanggal, silakan kembali ke halaman keranjang.
+                                </small>
                             </div>
-                        </div>
+                        @else
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Keranjang kosong! Silakan tambahkan produk terlebih dahulu.
+                            </div>
+                        @endif
                         <div class="mb-3">
                             <label for="catatan" class="form-label">Catatan Tambahan</label>
-                            <textarea class="form-control" id="catatan" name="catatan" rows="2"></textarea>
+                            <textarea class="form-control" id="catatan" name="catatan" rows="2" 
+                                      placeholder="Tambahkan catatan khusus untuk penyewaan ini..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -138,39 +158,35 @@
                     <div class="card-body">
                         <h5 class="card-title">Produk yang Disewa</h5>
 
+                        @foreach($cartItems as $item)
                         <div class="product-item">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <img src="{{ asset('images/mirrorless.jpg') }}" class="img-fluid rounded product-image" alt="Canon EOS R5">
+                                    <img src="{{ asset('storage/produk/' . $item->produk->gambar) }}" class="img-fluid rounded product-image" alt="{{ $item->produk->nama }}">
                                 </div>
                                 <div class="col-md-9">
-                                    <h6>Canon EOS R5</h6>
-                                    <p class="text-muted small mb-1">Kamera Mirrorless</p>
-                                    <p class="mb-1">Rp 250.000/hari</p>
+                                    <h6>{{ $item->produk->nama }}</h6>
+                                    <p class="text-muted small mb-1">{{ $item->produk->kategori }}</p>
+                                    <p class="mb-1">Rp{{ number_format($item->produk->harga, 0, ',', '.') }}/hari</p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted">Durasi: <span class="jumlah-hari">3</span> hari</span>
-                                        <span class="fw-bold">Rp 750.000</span>
+                                        <span class="text-muted">Jumlah: {{ $item->jumlah }} × Durasi: {{ $item->durasi }} hari</span>
+                                        <span class="fw-bold">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                                    </div>
+                                    <!-- Debug Info -->
+                                    <div class="mt-1">
+                                        <small class="text-danger">
+                                            Debug: {{ $item->produk->harga }} × {{ $item->jumlah }} × {{ $item->durasi }} = {{ $item->produk->harga * $item->jumlah * $item->durasi }}
+                                        </small>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            Tanggal: {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') }}
+                                        </small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="product-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <img src="{{ asset('images/dslr-camera.jpg') }}" class="img-fluid rounded product-image" alt="Canon EOS R5">
-                                </div>
-                                <div class="col-md-9">
-                                    <h6>Canon DSLR</h6>
-                                    <p class="text-muted small mb-1">Kamera DSLR</p>
-                                    <p class="mb-1">Rp 350.000/hari</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted">Durasi: <span class="jumlah-hari">1</span> hari</span>
-                                        <span class="fw-bold">Rp 350.000</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
 
                     </div>
                 </div>
@@ -181,13 +197,13 @@
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="radio" name="metode_pembayaran" id="qris" value="qris" checked>
                             <label class="form-check-label" for="qris">
-                                QRIS
+                                <i class="fas fa-qrcode me-2"></i>QRIS
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="metode_pembayaran" id="cod" value="cod">
                             <label class="form-check-label" for="cod">
-                                Bayar di Tempat (COD)
+                                <i class="fas fa-money-bill-wave me-2"></i>Bayar di Tempat (COD)
                             </label>
                         </div>
                     </div>
@@ -199,90 +215,72 @@
                 <div class="summary-card">
                     <h5 class="section-title">Ringkasan Pembayaran</h5>
 
+                    @foreach($cartItems as $item)
                     <div class="mb-3">
-                        <h6 class="mb-3">Canon EOS R5</h6>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal (<span id="total-hari">3</span> hari)</span>
-                            <span id="subtotal">Rp 750.000</span>
+                        <h6 class="mb-1">{{ $item->produk->nama }}</h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small text-muted">{{ $item->jumlah }} unit × {{ $item->durasi }} hari</span>
+                            <span class="small text-muted">{{ $item->jumlah }} × {{ $item->durasi }}</span>
                         </div>
-                        <hr>
-                         <h6 class="mb-3">Canon DSLR</h6>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal (<span id="total-hari">1</span> hari)</span>
-                            <span id="subtotal">Rp 350.000</span>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small text-muted">Rp{{ number_format($item->produk->harga, 0, ',', '.') }}/hari</span>
+                            <span class="small"></span>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between fw-bold">
-                            <span>Total Pembayaran</span>
-                            <span id="total-pembayaran">Rp 1.100.000</span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Subtotal</span>
+                            <span class="fw-bold text-primary">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</span>
                         </div>
                     </div>
-                    <button type="submit" form="checkoutForm" class="btn btn-checkout w-100">Lanjutkan Pembayaran</button>
+                    @if(!$loop->last)<hr>@endif
+                    @endforeach
+
+                    <hr class="mt-3">
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total Pembayaran</span>
+                        <span class="text-success">Rp{{ number_format($total, 0, ',', '.') }}</span>
+                    </div>
+
+                    <button type="submit" form="checkoutForm" class="btn btn-checkout w-100 mt-3">
+                        <i class="fas fa-credit-card me-2"></i>Lanjutkan Pembayaran
+                    </button>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        window.onload = function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Set tanggal minimum (hari ini)
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('tanggal_sewa').min = today;
-
-            // Event listener untuk perubahan tanggal
-            document.getElementById('tanggal_sewa').addEventListener('change', function() {
-                const tanggalKembali = document.getElementById('tanggal_kembali');
-                tanggalKembali.min = this.value;
-
-                if (tanggalKembali.value && tanggalKembali.value < this.value) {
-                    tanggalKembali.value = this.value;
-                }
-
-                hitungDurasiDanHarga();
-            });
-
-            document.getElementById('tanggal_kembali').addEventListener('change', hitungDurasiDanHarga);
-
-            function hitungDurasiDanHarga() {
-                const tglSewa = document.getElementById('tanggal_sewa').value;
-                const tglKembali = document.getElementById('tanggal_kembali').value;
-
-                if (tglSewa && tglKembali) {
-                    const diffTime = new Date(tglKembali) - new Date(tglSewa);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-                    if (diffDays > 0) {
-                        const dailyPrice = 250000;
-                        const subtotal = dailyPrice * diffDays;
-                        const biayaAsuransi = 50000;
-                        const total = subtotal + biayaAsuransi;
-
-                        // Update tampilan
-                        document.querySelectorAll('.jumlah-hari').forEach(el => {
-                            el.textContent = diffDays;
-                        });
-
-                        document.getElementById('total-hari').textContent = diffDays;
-                        document.getElementById('subtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-                        document.querySelector('.product-item .fw-bold').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-                        document.getElementById('total-pembayaran').textContent = `Rp ${total.toLocaleString('id-ID')}`;
-                    }
-                }
-            }
-
             // Form submission
             document.getElementById('checkoutForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-
-                if (!document.getElementById('setuju-syarat').checked) {
-                    alert('Anda harus menyetujui syarat dan ketentuan terlebih dahulu');
+                
+                // Validasi form
+                const nama = document.getElementById('nama').value;
+                const email = document.getElementById('email').value;
+                const telepon = document.getElementById('telepon').value;
+                const ktp = document.getElementById('ktp').value;
+                const alamat = document.getElementById('alamat').value;
+                
+                if (!nama || !email || !telepon || !ktp || !alamat) {
+                    alert('Harap lengkapi semua data yang diperlukan!');
                     return;
                 }
 
-                // Kirim data ke server
-                alert('Pembayaran berhasil diproses!');
-                // window.location.href = '/pembayaran-berhasil';
+                // Validasi metode pembayaran
+                const metodePembayaran = document.querySelector('input[name="metode_pembayaran"]:checked');
+                if (!metodePembayaran) {
+                    alert('Harap pilih metode pembayaran!');
+                    return;
+                }
+
+                // Jika validasi berhasil, submit form
+                this.submit();
             });
         });
     </script>

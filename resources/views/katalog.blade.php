@@ -503,6 +503,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+window.onload = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 </script>
 @endsection
 @endsection

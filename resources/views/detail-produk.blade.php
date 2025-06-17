@@ -514,6 +514,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Modal initialized successfully:', modalType);
     }
 });
+
+window.onload = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 </script>
 @endpush
 @endsection

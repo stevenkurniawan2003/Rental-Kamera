@@ -296,6 +296,10 @@ $(document).ready(function() {
         updateQuantity(id, value);
     });
 });
+
+window.onload = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 </script>
 @endpush
 
