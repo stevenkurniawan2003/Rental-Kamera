@@ -19,7 +19,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // ==========================
-// LANDING PAGE
+// LANDING PAGE.
 // ==========================
 Route::get('/', function () {
     return view('landingpage');
